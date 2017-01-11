@@ -52,6 +52,15 @@ public class ChopTask extends Task {
                     tree = api.objects.closest(t -> t != null && t.getName().equals("Tree") && t.getId() != 2409 && Constants.draynorWorkingArea.contains(t));
                 }
 
+                /*
+                 * If the level up widget is visible, interact with it
+                 */
+                if (api.widgets.isVisible(233)) {
+                    if (!api.widgets.containingText(233, "Click here to continue").isEmpty()) {
+                        api.widgets.containingText(233, "Click here to continue").get(0).interact();
+                    }
+                }
+
                 if (tree.interact("Chop Down")) {
 
                     /*
@@ -70,28 +79,12 @@ public class ChopTask extends Task {
                     }.sleep();
 
                     /*
-                     * If the level up widget is visible, interact with it
-                     */
-                    if (api.widgets.isVisible(233)) {
-                        if (!api.widgets.containingText(233, "Click here to continue").isEmpty()) {
-                            api.widgets.containingText(233, "Click here to continue").get(0).interact();
-                        }
-                    }
-
-                    /*
                      * The last block of the chop method checks if the world hop constraints are met and if so--to hop
                      */
                     //api.log("There are currently " + playersInArea(api.myPlayer().getArea(5)) + "/" + api.players.getAll().size() + " players in our radius of 5.");
                     shouldWeHop(playersInArea(api.myPlayer().getArea(5)), Constants.getHopPlayerLim(), Constants.getHopTimeMin());
                 }
             } else {
-
-                /*
-                 * If the tree is not visible, adjust camera to compensate
-                 */
-                if (api.camera.toEntity(tree)) {
-                    api.log("Adjusting camera to tree");
-                }
 
                 /*
                  * Occasionally if a tree is nearby (isVisible) but too far away to click the camera will bug out.
@@ -109,6 +102,14 @@ public class ChopTask extends Task {
                         }
                     });
                     api.execute(webEvent);
+                } else {
+
+                    /*
+                     * If the tree is not visible, adjust camera to compensate
+                     */
+                    if (api.camera.toEntity(tree)) {
+                        api.log("Adjusting camera to tree");
+                    }
                 }
             }
         } else {
@@ -187,6 +188,7 @@ public class ChopTask extends Task {
     private void hopFreeWorlds(int minutesEachHop) {
         if ((System.currentTimeMillis() - Constants.lastHopTime()) / 1000 > Constants.getNextHop()) {
             api.log("Our area is being overrun... Hopping to a new world!");
+
             if (api.worlds.hopToF2PWorld()) {
 
                 /*
