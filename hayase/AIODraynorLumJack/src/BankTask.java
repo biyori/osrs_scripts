@@ -56,7 +56,7 @@ public class BankTask extends Task {
         /*
          * People like to lure dark wizards inside Draynor bank--run away from those mages
          */
-        if (api.myPlayer().isUnderAttack()) {
+        if (api.myPlayer().isUnderAttack() && Banks.DRAYNOR.contains(api.myPlayer())) {
             api.log("Under attack! Running to a safe spot...");
 
             //Safe spot near abby witch
@@ -73,9 +73,19 @@ public class BankTask extends Task {
             }.sleep();
 
             //Lets hop worlds to get away from the bank mages
+            //apparently only 381++ doesn't bug out?
             if (api.worlds.hopToF2PWorld()) {
                 api.log("Hopping worlds...");
             }
+        } else {
+
+            /*
+             * If we are not in the bank, run as fast as we can to the bank
+             */
+            api.log("Under attack! Running to the bank");
+            WebWalkEvent runEvent = new WebWalkEvent(Banks.DRAYNOR);
+            runEvent.setEnergyThreshold(1);
+            api.execute(runEvent);
         }
 
         RS2Object bankBooth = api.objects.closest(draynorBankRange, "Bank booth");
@@ -90,7 +100,7 @@ public class BankTask extends Task {
                 /*
                  * If the bank is not open, start trying to open the bank
                  */
-                if (!api.bank.isOpen()) {
+                if (!api.bank.isOpen() && !api.myPlayer().isUnderAttack()) {
 
                     /*
                      * If the script detected our axe purchase offer went through--open the collection window and
