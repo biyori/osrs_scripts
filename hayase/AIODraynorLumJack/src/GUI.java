@@ -80,14 +80,14 @@ class GUI extends JFrame {
                     new Insets(0, 0, 5, 5), 0, 0));
 
             //---- powerChop ----
-            powerChop.setText("Power Chop");
+            powerChop.setText("Power chop");
             powerChop.setToolTipText("Drop all logs");
             panel1.add(powerChop, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0,
                     GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                     new Insets(0, 0, 5, 5), 0, 0));
 
             //---- progressiveMode ----
-            progressiveMode.setText("Progressive Mode");
+            progressiveMode.setText("Progressive mode");
             progressiveMode.setToolTipText("Automatically switches over to the next tree type");
             panel1.add(progressiveMode, new GridBagConstraints(4, 1, 1, 1, 0.0, 0.0,
                     GridBagConstraints.CENTER, GridBagConstraints.BOTH,
@@ -164,7 +164,7 @@ class GUI extends JFrame {
 
             //---- sellLogsAtGE ----
             sellLogsAtGE.setText("Sell logs to upgrade axe");
-            sellLogsAtGE.setToolTipText("Sell logs at the Grand Exchange and buys axes up to Adamant");
+            sellLogsAtGE.setToolTipText("Sell logs at the Grand Exchange and buys axes up to adamant");
             progressiveModeOptions.add(sellLogsAtGE, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
                     GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                     new Insets(0, 0, 5, 5), 0, 0));
