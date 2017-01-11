@@ -4,6 +4,7 @@ import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.map.constants.Banks;
 import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.api.model.RS2Object;
+import org.osbot.rs07.api.ui.Tab;
 import org.osbot.rs07.event.WebWalkEvent;
 import org.osbot.rs07.script.MethodProvider;
 import org.osbot.rs07.utility.Condition;
@@ -23,7 +24,7 @@ public class AxeTask extends Task {
 
     /**
      * The AxeTask runs only when we have no axe in our inventory or equipment
-     *
+     * <p>
      * Is the bot wielding an axe, have an axe in the inventory, or perhaps both?
      *
      * @return Since it returns true, we need to flip that statement and just check !true to process that we have no axe
@@ -37,6 +38,21 @@ public class AxeTask extends Task {
 
     @Override
     public void process() {
+
+        /*
+        * Occasionally after hopping worlds, we lose information about what is inside our inventory and equipment
+        *
+        * Check out inventory & equipment before determining if we really need to find an axe in our bank
+        */
+        if (!api.tabs.getOpen().equals(Tab.EQUIPMENT)) {
+            api.tabs.open(Tab.EQUIPMENT);
+        }
+        try {
+            MethodProvider.sleep(random(1000, 2000));
+        } catch (Exception e) {
+            api.log("Error: " + e);
+        }
+        api.tabs.open(Tab.INVENTORY);
 
         /*
          * We live in Draynor, so lets use the Draynor bank once again
