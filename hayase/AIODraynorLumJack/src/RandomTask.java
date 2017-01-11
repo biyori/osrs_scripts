@@ -6,12 +6,15 @@ import org.osbot.rs07.api.ui.Skill;
 import org.osbot.rs07.api.ui.Tab;
 import org.osbot.rs07.script.MethodProvider;
 
+import java.security.SecureRandom;
 import java.util.List;
 
 /**
  * Created by Kyle on 2016/12/11.
  */
 public class RandomTask extends Task {
+
+    private SecureRandom antiban = new SecureRandom();
 
     RandomTask(MethodProvider api) {
         super(api);
@@ -31,20 +34,62 @@ public class RandomTask extends Task {
     public void process() {
 
         /*
+         * Setup the range for the switch statement using SecureRandom()
+         */
+        int min = 0, max = 2468 - 1;
+        int random = antiban.nextInt(max - min + 1) + min;
+
+
+        /*
          * Switch statement to handle the different anti-ban cases
          */
-        switch (random(0, 2468)) { //TODO: Allow user input to change the anti-ban frequency
+        //  switch (random(0, 2468)) { //TODO: Allow user input to change the anti-ban frequency
+        switch (random) {
             case 1:
-                api.log("[Anti-Ban]: Examining nearby object");
-                RS2Object examineThis = api.objects.closest(n -> n != null && n.exists() && n.isVisible() && !n.getName().equals("Oak") && !n.getName().equals("Tree") && n.hasAction("Examine"));
-                if (examineThis != null) {
-                    examineThis.hover();
-                    afk(100, 200);
-                    api.mouse.click(true);
-                    afk(300, 500);
-                    examineThis.interact("examine");
+                api.log("[Anti-Ban]: Examining random object");
+                /*
+                 * Create a list for editing
+                 */
+                List<RS2Object> examineAbles = api.objects.getAll();
+
+                /*
+                 * This isn't very efficient but it's not called that often that I do not believe this is a performance burden.
+                 *
+                 * Loop through another object set and remove the objects we do not want to mess with
+                 */
+                for (RS2Object obj : api.objects.getAll()) {
+                    if (obj == null || !obj.isVisible() || obj.getName().equals("null") || obj.getName().equals("Oak") || obj.getName().equals("Tree")) {
+                        examineAbles.remove(obj);
+                    }
                 }
-                api.mouse.moveRandomly();
+
+                /*
+                 * If our list still had contents left, we definitely can work with it
+                 */
+                if (examineAbles.size() > 0) {
+                    /*
+                     * Using another SecureRandom object to try and be more unpredictable than just random();
+                     */
+                    SecureRandom secure = new SecureRandom();
+
+                    /*
+                     * Easy min, max initialization to make it more readable
+                     */
+                    int minimum = 0, maximum = examineAbles.size() - 1;
+                    int range = maximum - minimum + 1;
+                    int randomIndex = secure.nextInt(range) + minimum;
+
+                    /*
+                     * Hover over the object then right click it, while the menu is open click examine
+                     */
+                    examineAbles.get(randomIndex).hover();
+                    afk(111, 555);
+                    api.mouse.click(true);
+                    afk(555, 2222);
+                    if (api.menu.isOpen()) {
+                        api.menu.selectAction("Examine");
+                    }
+                }
                 break;
             case 2:
                 api.log("[Anti-Ban]: Hovering WC XP");
@@ -61,11 +106,12 @@ public class RandomTask extends Task {
                 RS2Object tree = api.objects.closest(Constants.getSelectedTree());
                 if (tree != null) {
                     tree.hover();
-                    afk(100, 200);
+                    afk(111, 555);
                     api.mouse.click(true);
-                    afk(300, 500);
-                    tree.interact("Examine");
-                    api.mouse.moveRandomly();
+                    afk(555, 2222);
+                    if (api.menu.isOpen()) {
+                        api.menu.selectAction("Examine");
+                    }
                 }
                 break;
             case 5:
@@ -99,20 +145,6 @@ public class RandomTask extends Task {
                 afk(1000, 10000);
                 break;
             default:
-                //TODO: Fix examining any object
-//RS2Object examineThis2 = api.objects.closest(n -> n != null && n.exists() && n.isVisible()); /*&& !n.getName().equals("Oak") && !n.getName().equals("Tree")*/// && n.hasAction("Examine"));
-//RS2Object examineDis = api.getObjects().closest(n -> n != null && n.isVisible() && n.interact("Examine"));
-//   RS2Object examineDis2 = api.getObjects().closest(n -> n != null && n.isVisible() && n.hasAction("Examine"));
-// if (examineDis2 != null)
-//     api.log("Local object to examine: " + examineDis.getName());
-//      List<RS2Object> examineThis3 = api.objects.getAll();
-// examineThis3.removeIf(ob -> !ob.hasAction("Examine"));
-/*     for (RS2Object obj : api.objects.getAll()) {
-if (obj != null && obj.isVisible()) {
-if (obj.interact("Examine"))
-api.log("Object: " + obj.getName());
-}
-}*/
                 break;
         }
     }
