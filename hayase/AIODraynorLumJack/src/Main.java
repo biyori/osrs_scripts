@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -233,8 +234,11 @@ public class Main extends Script {
         /*
          * If the bot loses connection (got banned?)--take a screenshot
          * The reason for this is to screenshot the last bit of life the user might have
+         *
+         * Note: I noticed there was a Utilities.takeScreenshot() function but I couldn't change the file name to the players username for easy organization
          */
         if (getClient().getLoginStateValue() == 40) {//40 = connection lost
+            log("Client connection lost!");
             TakeScreenshot();//possibly add in paint as well
         }
 
@@ -361,7 +365,12 @@ public class Main extends Script {
         log("Attempting to take a screenshot");
         BufferedImage img = bot.getCanvas().getGameBuffer();
 
+        //Get the current date to save in the screenshot folder
+        LocalDate today = LocalDate.now();
+        int month = today.getMonthValue(), day = today.getDayOfMonth(), year = today.getYear();
+
         //Make the file name the last 5 digits of System.currentTimeMillis() converted to seconds
+        //If I didn't use the LocalDate, 7 digits is enough time to handle 3.8 months of seconds before returning duplicates
         String fileName = String.valueOf(System.currentTimeMillis() / 1000).substring(5, 10);
 
         try {
@@ -372,10 +381,12 @@ public class Main extends Script {
             }
 
             //save the image to the folder and rename all player spaces with underscores
-            ImageIO.write(
+            if (ImageIO.write(
                     img,
                     "png",
-                    new File(getDirectoryData() + "Hayase/Screenshots/" + myPlayer().getName().replaceAll("\\u00a0", "_") + "-" + fileName + ".png"));
+                    new File(getDirectoryData() + "Hayase/Screenshots/" + year + "." + month + "." + day + "-" + myPlayer().getName().replaceAll("\\u00a0", "_") + "-" + fileName + ".png"))) {
+                log("Saved " + getDirectoryData() + "Hayase/Screenshots/" + year + "." + month + "." + day + "-" + myPlayer().getName().replaceAll("\\u00a0", "_") + "-" + fileName + ".png");
+            }
         } catch (Exception e) {
             log("Error! " + e.getMessage());
         }
