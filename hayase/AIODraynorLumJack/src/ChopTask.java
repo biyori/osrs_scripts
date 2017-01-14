@@ -13,6 +13,7 @@ import org.osbot.rs07.script.MethodProvider;
 import org.osbot.rs07.utility.Condition;
 import org.osbot.rs07.utility.ConditionalSleep;
 
+import java.security.SecureRandom;
 import java.util.List;
 
 public class ChopTask extends Task {
@@ -189,10 +190,59 @@ public class ChopTask extends Task {
         if ((System.currentTimeMillis() - Constants.lastHopTime()) / 1000 > Constants.getNextHop()) {
             api.log("Our area is being overrun... Hopping to a new world!");
 
-            if (api.worlds.hopToF2PWorld()) {
+            /*
+             * Create an array of the available F2P world list
+             * TODO: Detect if a player is P2P, then hop to P2P worlds instead
+             */
+            int[] worlds = {301, 308, 316, 326, 335, 382, 383, 384, 393, 394};
+
+            /*
+             * Grab the current world to make sure we do not attempt to hop to it
+             */
+            int currentWorld = api.worlds.getCurrentWorld();
+
+            /*
+             * Initialize a new secure random object
+             */
+            SecureRandom secure = new SecureRandom();
+
+            /*
+             * Setup the limits
+             */
+            int minimum = 0, maximum = worlds.length - 1;
+            int range = maximum - minimum + 1;
+
+            /*
+             * Generate a SR number with respect to our array length
+             */
+            int randomWorld = secure.nextInt(range) + minimum;
+
+            /*
+             * While the current world is equal to our new world, keep working
+             */
+            while (currentWorld == worlds[randomWorld]) {
+                randomWorld = secure.nextInt(range) + minimum;
+            }
+
+            /*
+             * Finally we have a world to hop to--let's hop!
+             */
+            if (api.worlds.hop(worlds[randomWorld])) {
 
                 /*
-                 * Hopping now, save the current time as the last hop timestamp
+                 * Hopping now, sleep until the client detects our axe
+                 *
+                 * Occasionally after hopping worlds, we lose information about what is inside our inventory and equipment--the client needs to finish loading
+                 */
+                new ConditionalSleep(10_000) {
+                    @Override
+                    public boolean condition() throws InterruptedException {
+                        return api.equipment.contains(Constants.woodAxes) || api.inventory.contains(Constants.woodAxes);
+                    }
+                }.sleep();
+
+                /*
+                 * Save the current time as the last hop timestamp
                  */
                 Constants.lastHopTime(System.currentTimeMillis());
 
