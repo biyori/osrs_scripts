@@ -4,7 +4,6 @@ import org.osbot.rs07.api.map.Area;
 import org.osbot.rs07.api.map.constants.Banks;
 import org.osbot.rs07.api.model.NPC;
 import org.osbot.rs07.api.model.RS2Object;
-import org.osbot.rs07.api.ui.Tab;
 import org.osbot.rs07.event.WebWalkEvent;
 import org.osbot.rs07.script.MethodProvider;
 import org.osbot.rs07.utility.Condition;
@@ -40,21 +39,6 @@ public class AxeTask extends Task {
     public void process() {
 
         /*
-        * Occasionally after hopping worlds, we lose information about what is inside our inventory and equipment
-        *
-        * Check out inventory & equipment before determining if we really need to find an axe in our bank
-        */
-        if (!api.tabs.getOpen().equals(Tab.EQUIPMENT)) {
-            api.tabs.open(Tab.EQUIPMENT);
-        }
-        try {
-            MethodProvider.sleep(random(1000, 2000));
-        } catch (Exception e) {
-            api.log("Error: " + e);
-        }
-        api.tabs.open(Tab.INVENTORY);
-
-        /*
          * We live in Draynor, so lets use the Draynor bank once again
          */
         api.log("Where is our axe? Walking to bank!");
@@ -76,28 +60,43 @@ public class AxeTask extends Task {
         api.execute(webEvent);
 
         /*
-         * People like to lure dark wizards inside Draynor bank--run away from those mages
+         * Survival against dark mages and jail guards
          */
         if (api.myPlayer().isUnderAttack()) {
-            api.log("Under attack! Running to a safe spot...");
 
-            //Safe spot near abby witch
-            Area area = new Area(3090, 3263, 3094, 3257);
+            /*
+             * People like to lure dark wizards inside Draynor bank--run away from those mages
+             */
+            if (Banks.DRAYNOR.contains(api.myPlayer())) {
+                api.log("Under attack! Running to a safe spot...");
 
-            //Walk to the safe area
-            api.walking.walk(area);
+                //Safe spot near abby witch
+                WebWalkEvent runEvent = new WebWalkEvent(new Area(3090, 3263, 3094, 3257));
+                runEvent.setEnergyThreshold(1);
+                api.execute(runEvent);
 
-            //Sleep until we are out of combat
-            new ConditionalSleep(10_000) {
-                @Override
-                public boolean condition() throws InterruptedException {
-                    return !api.myPlayer().isUnderAttack();
+                //Sleep until we are out of combat
+                new ConditionalSleep(10_000) {
+                    @Override
+                    public boolean condition() throws InterruptedException {
+                        return !api.myPlayer().isUnderAttack();
+                    }
+                }.sleep();
+
+                //Lets hop worlds to get away from the bank mages
+                if (api.worlds.hopToF2PWorld()) {
+                    api.log("Hopping worlds...");
                 }
-            }.sleep();
+            } else {
 
-            //Lets hop worlds to get away from the bank mages
-            if (api.worlds.hopToF2PWorld()) {
-                api.log("Hopping worlds...");
+                /*
+                 * If we are still under attack and not in the bank, it must be from the jail guard
+                 * Run as fast as we can to the bank
+                 */
+                api.log("Under attack! Running to the bank");
+                WebWalkEvent runEvent = new WebWalkEvent(Banks.DRAYNOR);
+                runEvent.setEnergyThreshold(1);
+                api.execute(runEvent);
             }
         }
 
