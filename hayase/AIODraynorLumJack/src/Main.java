@@ -231,6 +231,7 @@ public class Main extends Script {
 
     @Override
     public void onPaint(Graphics2D g) {
+
         /*
          * If the bot loses connection (got banned?)--take a screenshot
          * The reason for this is to screenshot the last bit of life the user might have
