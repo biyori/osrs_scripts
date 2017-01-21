@@ -58,7 +58,7 @@ public class RandomTask extends Task {
                  * Loop through another object set and remove the objects we do not want to mess with
                  */
                 for (RS2Object obj : api.objects.getAll()) {
-                    if (obj == null || !obj.isVisible() || obj.getName().equals("null") || obj.getName().equals("Oak") || obj.getName().equals("Tree")) {
+                    if (obj == null || !obj.isVisible() || obj.getName().equals("null") || obj.getName().equals(Constants.getSelectedTree())) {
                         examineAbles.remove(obj);
                     }
                 }
