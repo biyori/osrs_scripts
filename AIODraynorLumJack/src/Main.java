@@ -136,14 +136,14 @@ public class Main extends Script {
              * to the players woodcut level
              */
             tasks.add(new ProgressiveTask(this));
-        }
 
-        /*
-         * If the player is using progressive mode and has selected, "Skip Willow trees" this constant will ensure that
-         * ProgressiveTask skips willow trees (it will chop oak trees until it can chop yew trees)
-         */
-        if (Constants.skipWillowTrees()) {
-            log("Progressive mode will skip willow trees.");
+            /*
+             * If the player is using progressive mode and has selected, "Skip Willow trees" this constant will ensure that
+             * ProgressiveTask skips willow trees (it will chop oak trees until it can chop yew trees)
+             */
+            if (Constants.skipWillowTrees()) {
+                log("Progressive mode will skip willow trees.");
+            }
         }
 
         /*
@@ -264,7 +264,8 @@ public class Main extends Script {
              * To handle the width of our paint box, store the strings in some objects to compare later
              */
             String chopStats = Constants.treeLogType() + " chopped: " + logsChopped + " [" + Math.ceil(getPerHour(logsChopped)) + "/hr]";
-            String profitStats = "Profit: " + logsChopped * logPrice + "gp [" + String.format("%.2f", (getPerHour(logsChopped)) * logPrice) + " gp/hr]";
+            String powerChop = Constants.powerChopping() ? "Loss" : "Profit";
+            String profitStats = powerChop + ": " + logsChopped * logPrice + "gp [" + String.format("%.2f", (getPerHour(logsChopped)) * logPrice) + " gp/hr]";
 
             /*
              * Calculate which string is longer and make that our width
@@ -292,7 +293,10 @@ public class Main extends Script {
             /*
              * Fill in the paint box with  strings
              */
-            g.drawString(Constants.treeLogType() + " in bank: " + Constants.getTotalLogs() + " (" + profit + suffix + " gp)", 25, 250);//TODO AVERAGE BANK TIMER
+            if (Constants.powerChopping()) {
+                g.drawString("Power Chopping " + Constants.getSelectedTree() + "s", 25, 250);
+            } else
+                g.drawString(Constants.treeLogType() + " in bank: " + Constants.getTotalLogs() + " (" + profit + suffix + " gp)", 25, 250);//TODO AVERAGE BANK TIMER
             g.drawString(profitStats, 25, 265);
             g.drawString(chopStats, 25, 280);
             g.drawString("Time Ran: " + formatTime(System.currentTimeMillis() - startTime), 25, 295);
