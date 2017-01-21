@@ -72,7 +72,7 @@ public class AxeTask extends Task {
 
                 //Safe spot near abby witch
                 WebWalkEvent runEvent = new WebWalkEvent(new Area(3090, 3263, 3094, 3257));
-                runEvent.setEnergyThreshold(1);
+                runEvent.setEnergyThreshold(0);
                 api.execute(runEvent);
 
                 //Sleep until we are out of combat
@@ -95,7 +95,7 @@ public class AxeTask extends Task {
                  */
                 api.log("Under attack! Running to the bank");
                 WebWalkEvent runEvent = new WebWalkEvent(Banks.DRAYNOR);
-                runEvent.setEnergyThreshold(1);
+                runEvent.setEnergyThreshold(0);
                 api.execute(runEvent);
             }
         }
