@@ -31,7 +31,7 @@ class GUI extends JFrame {
         JLabel label5 = new JLabel();
         JPanel progressiveModeOptions = new JPanel();
         JCheckBox sellLogsAtGE = new JCheckBox();
-        JCheckBox skipWillowTrees = new JCheckBox();
+        JCheckBox skipWillowTrees = new JCheckBox("", true);
         JButton startScript = new JButton();
 
         //======== this ========
@@ -213,7 +213,6 @@ class GUI extends JFrame {
                 Constants.progressiveSkipWillows(false);
         });
 
-        treeTypes.setSelectedIndex(0);
         Constants.setSelectedTree(treeTypes.getItemAt(treeTypes.getSelectedIndex()));
 
         treeTypes.addActionListener(e -> {
@@ -228,9 +227,6 @@ class GUI extends JFrame {
             } else if (!enableAntiban.isSelected())
                 Constants.setEnableAntiBan(false);
         });
-
-        playerLim.setValue(3);
-        hopInterval.setValue(5);
 
         playerLim.addChangeListener(e -> {
             int hopPlayer = (Integer) playerLim.getValue();
@@ -258,6 +254,17 @@ class GUI extends JFrame {
                 Constants.setHopValues((Integer) playerLim.getValue(), (Integer) hopInterval.getValue());
             setVisible(false);
         });
+
+
+        //Setup default values
+        treeTypes.setSelectedIndex(0);
+        playerLim.setValue(3);
+        hopInterval.setValue(5);
+        Constants.powerChopping(false);
+        Constants.setEnableAntiBan(true);
+        Constants.sellLogsAtGE(false);
+        Constants.enableProgressiveMode(false);
+        Constants.progressiveSkipWillows(true);
 
         pack();
         setLocationRelativeTo(getOwner());
