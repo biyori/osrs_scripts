@@ -34,7 +34,6 @@ public class ChopTask extends Task {
          * Get the closest tree in our working area
          */
         RS2Object tree = api.objects.closest(Constants.draynorWorkingArea, Constants.getSelectedTree());
-        //   RS2Object tree = getObjects().getAll().stream().filter(o -> o.getName().equals("Tree") && o.hasAction("Chop down")).min((o1, o2) -> Integer.compare(getMap().distance(o1), getMap().distance(o2))).orElse(null);
 
         /*
          * Check if the tree exists and continue if so
@@ -76,7 +75,7 @@ public class ChopTask extends Task {
                     new ConditionalSleep(10_000) {
                         @Override
                         public boolean condition() throws InterruptedException {
-                            return api.myPlayer().isAnimating() || api.myPlayer().isUnderAttack() || api.widgets.isVisible(233);//or tree is null?S
+                            return api.myPlayer().isAnimating() || api.myPlayer().isUnderAttack() || api.widgets.isVisible(233);
                         }
                     }.sleep();
 
@@ -111,6 +110,14 @@ public class ChopTask extends Task {
                      */
                     if (api.camera.toEntity(tree)) {
                         api.log("Adjusting camera to tree");
+
+                        /*
+                         * If the camera just fails to find our tree, just walk to it
+                         */
+                        if (!tree.isVisible()) {
+                            api.log("Couldn't adjust camera properly. Walking to tree");
+                            api.execute(new WalkingEvent(tree));
+                        }
                     }
                 }
             }
@@ -152,7 +159,7 @@ public class ChopTask extends Task {
     private void runAwayToSafeSpot() {
         if (api.myPlayer().isUnderAttack()) {
             WebWalkEvent webEvent = new WebWalkEvent(Constants.getAreaForTree().getRandomPosition());
-            webEvent.setEnergyThreshold(1);
+            webEvent.setEnergyThreshold(0);
             api.execute(webEvent);
         }
     }
