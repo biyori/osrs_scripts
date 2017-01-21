@@ -34,7 +34,7 @@ public class ChopTask extends Task {
          * Get the closest tree in our working area
          */
         RS2Object tree = api.objects.closest(Constants.draynorWorkingArea, Constants.getSelectedTree());
-     //   RS2Object tree = getObjects().getAll().stream().filter(o -> o.getName().equals("Tree") && o.hasAction("Chop down")).min((o1, o2) -> Integer.compare(getMap().distance(o1), getMap().distance(o2))).orElse(null);
+        //   RS2Object tree = getObjects().getAll().stream().filter(o -> o.getName().equals("Tree") && o.hasAction("Chop down")).min((o1, o2) -> Integer.compare(getMap().distance(o1), getMap().distance(o2))).orElse(null);
 
         /*
          * Check if the tree exists and continue if so
@@ -63,7 +63,7 @@ public class ChopTask extends Task {
                     }
                 }
 
-                if (tree.interact("Chop Down")) {
+                if (tree.interact("Chop down")) {
 
                     /*
                      * Console aesthetics
@@ -76,7 +76,7 @@ public class ChopTask extends Task {
                     new ConditionalSleep(10_000) {
                         @Override
                         public boolean condition() throws InterruptedException {
-                            return api.myPlayer().isAnimating() || api.myPlayer().isUnderAttack() || api.widgets.isVisible(233);
+                            return api.myPlayer().isAnimating() || api.myPlayer().isUnderAttack() || api.widgets.isVisible(233);//or tree is null?S
                         }
                     }.sleep();
 
