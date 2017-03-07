@@ -10,9 +10,9 @@ import org.osbot.rs07.api.map.Area;
  * The constants class is for defining constant values and exchanging values between Tasks
  */
 public class Constants {
-    private static int total_logs = 0, nextHop = 0, playerLimits = 0, minutesPerHop = 0;
+    private static int total_logs = 0, nextHop = 0, playerLimits = 0, minutesPerHop = 0, logValue = 31;
     private static String statusReport = "", tree = "";
-    private static boolean powerChop = false, enableAntiBan = true, enableProgressiveMode = false, sellLogsAtGE = false, skipWillowTrees = false, needToBuyAxes = false, needToCollectAxes = false;
+    private static boolean powerChop = false, enableAntiBan = true, enableProgressiveMode = false, sellLogsAtGE = false, skipWillowTrees = false, pauseProgressiveMode = true, needToBuyAxes = false, needToCollectAxes = false;
     private static long lastHop;
 
     static boolean powerChopping() {
@@ -33,6 +33,14 @@ public class Constants {
 
     static void setTotalLogs(int logs) {
         Constants.total_logs = logs;
+    }
+
+    static void setLogPrice(int gp_value) {
+        Constants.logValue = gp_value;
+    }
+
+    static int getLogPrice() {
+        return Constants.logValue;
     }
 
     static int getTotalLogs() {
@@ -256,6 +264,14 @@ public class Constants {
 
     static boolean needToBuyAxes() {
         return Constants.needToBuyAxes;
+    }
+
+    static boolean progressiveModePaused() {
+        return Constants.pauseProgressiveMode;
+    }
+
+    static void pauseProgressiveMode(boolean yes) {
+        Constants.pauseProgressiveMode = yes;
     }
 
     static void progressiveSkipWillows(boolean yes) {

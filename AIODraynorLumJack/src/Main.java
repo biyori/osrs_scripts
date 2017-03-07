@@ -21,7 +21,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-@ScriptManifest(author = "Hayase", info = "Chops trees in Draynor/Lumbridge and finally banks in Draynor", name = "AIO Draynor Lumberjack", version = 1.0, logo = "http://i.imgur.com/la9gPez.png")
+@ScriptManifest(author = "Hayase", info = "Chops trees in Draynor/Lumbridge and finally banks in Draynor", name = "AIO Draynor Lumberjack", version = 1.1, logo = "http://i.imgur.com/la9gPez.png")
 public class Main extends Script {
 
     /**
@@ -69,6 +69,7 @@ public class Main extends Script {
          */
         if (exchangeInfo.get("overall") != null) {
             logPrice = exchangeInfo.get("overall");
+            Constants.setLogPrice(logPrice);
         }
 
         /*
@@ -108,18 +109,6 @@ public class Main extends Script {
         }
 
         /*
-         * If progressive mode is enabled and we can sell logs at the GE, add the ExchangeTask to the script
-         */
-        if (Constants.sellLogsAtGE()) {
-            log("Grand Exchange enabled");
-
-            /*
-             * ExchangeTask is responsible for walking to the GE and selling logs to purchase axes
-             */
-            tasks.add(new ExchangeTask(this));
-        }
-
-        /*
          * Adds the ChopTask to the script
          * Responsible for detecting all local trees and chopping them with respect to their type
          */
@@ -143,6 +132,18 @@ public class Main extends Script {
              */
             if (Constants.skipWillowTrees()) {
                 log("Progressive mode will skip willow trees.");
+            }
+
+            /*
+             * If progressive mode is enabled and we can sell logs at the GE, add the ExchangeTask to the script
+             */
+            if (Constants.sellLogsAtGE()) {
+                log("Grand Exchange enabled");
+
+                /*
+                 * ExchangeTask is responsible for walking to the GE and selling logs to purchase axes
+                 */
+                tasks.add(new ExchangeTask(this));
             }
         }
 
@@ -374,10 +375,6 @@ public class Main extends Script {
         LocalDate today = LocalDate.now();
         int month = today.getMonthValue(), day = today.getDayOfMonth(), year = today.getYear();
 
-        //Make the file name the last 5 digits of System.currentTimeMillis() converted to seconds
-        //If I didn't use the LocalDate, 7 digits is enough time to handle 3.8 months of seconds before returning duplicates
-        String fileName = String.valueOf(System.currentTimeMillis() / 1000).substring(5, 10);
-
         try {
 
             //Create a folder with my forum name to tell the user which script created this folder
@@ -389,8 +386,8 @@ public class Main extends Script {
             if (ImageIO.write(
                     img,
                     "png",
-                    new File(getDirectoryData() + "Hayase/Screenshots/" + year + "." + month + "." + day + "-" + myPlayer().getName().replaceAll("\\u00a0", "_") + "-" + fileName + ".png"))) {
-                log("Saved " + getDirectoryData() + "Hayase/Screenshots/" + year + "." + month + "." + day + "-" + myPlayer().getName().replaceAll("\\u00a0", "_") + "-" + fileName + ".png");
+                    new File(getDirectoryData() + "Hayase/Screenshots/" + year + "." + month + "." + day + "-" + myPlayer().getName().replaceAll("\\u00a0", "_") + ".png"))) {
+                log("Saved " + getDirectoryData() + "Hayase/Screenshots/" + year + "." + month + "." + day + "-" + myPlayer().getName().replaceAll("\\u00a0", "_") + ".png");
             }
         } catch (Exception e) {
             log("Error! " + e.getMessage());

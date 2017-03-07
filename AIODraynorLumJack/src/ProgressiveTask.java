@@ -21,7 +21,7 @@ public class ProgressiveTask extends Task {
      */
     @Override
     public boolean canProcess() {
-        return api.myPlayer().isAnimating() && !api.inventory.isFull();
+        return api.myPlayer().isAnimating() && !api.inventory.isFull() && !Constants.progressiveModePaused();
     }
 
     @Override
@@ -39,6 +39,7 @@ public class ProgressiveTask extends Task {
                 api.log("It's time to chop" + (treeLimits().equals("Tree") ? "" : " " + treeLimits()) + " trees now!");
                 Constants.setSelectedTree(treeLimits());
                 Constants.setTotalLogs(0);
+                //TODO: Update paint with more information about logs
             } else {
 
                 /*
