@@ -145,6 +145,9 @@ class BankClass {
                 afk(200, 500);
                 api.log("Depositing our logs");
                 depositItems();
+                //Tell ExchangeTask to go buy some axes
+                if (Constants.progressiveMode() && Constants.sellLogsAtGE())
+                    needToBuyAxes();
                 upgradeAxe();
             } else {
                 api.log("Failed to bank");
@@ -160,6 +163,9 @@ class BankClass {
             if (api.bank.isOpen()) {
                 afk(200, 500);
                 api.log("Searching for an axe to use");
+                //Tell ExchangeTask to go buy some axes
+                if (Constants.progressiveMode() && Constants.sellLogsAtGE())
+                    needToBuyAxes();
                 upgradeAxe();
             } else {
                 api.log("Failed to bank");
@@ -270,9 +276,6 @@ class BankClass {
             } else {
                 api.log("We do not have a " + Constants.bestAxeToUse(level) + " to withdraw. Downgrading options...");
 
-                //Tell ExchangeTask to go buy some axes
-                needToBuyAxes(level);
-
                 for (int i = Constants.woodAxes.length - 1; i > -1; i--) {
                     if (Constants.canUseAxe(Constants.woodAxes[i], level) && Constants.axeLevelReq(item.getName()) < Constants.axeLevelReq(Constants.woodAxes[i])) {
                         if (api.bank.withdraw(Constants.woodAxes[i], 1)) {
@@ -288,34 +291,25 @@ class BankClass {
 
 
     /**
-     * From 0 to lvl 15 WC it requires 97 logs. Due to tutorial islands tree it changes to 96.
+     * If our bank does not have axe upgrades, calculate our logs value to see if we have enough to sell for upgrades
      * <p>
-     * This function is also for activating the ExchangeTask once the condition is met.
+     * Activate the ExchangeTask once the condition is met.
      */
-    private void needToBuyAxes(int level) {//TODO: Tell progressiveTask to keep chopping trees until we have enough to upgrade axes!
-        if (!Constants.bestAxeToUse(level).equals("Rune axe") && !api.bank.contains("Steel axe", "Mithril axe", "Adamant axe")) {
+    private void needToBuyAxes() {
+        if (!api.bank.contains("Steel axe", "Mithril axe", "Adamant axe")) {
             Item logs = api.bank.getItem("Logs");
-            Item oaks = api.bank.getItem("Oak logs");
             if (logs != null) {
-
-                //97 logs is the amount of logs needed to lvl 15 WC and also enough gold to purchase every axe up to Adamant (excluding black axes)
-                if (logs.getAmount() >= 96) {
+                //We need 2000 gold to purchases all axes up to adamant (Excluding black axes).
+                //TODO: In the future possibly just bid on the current axe price from the OSBuddy Exchange and just +5% 2-3x to instantly buy the axe
+                if (logs.getAmount() * Constants.getLogPrice() >= 2000) {
                     api.log("We have enough logs to purchase axes!");
                     Constants.needToBuyAxes(true);
                 } else {
-                    api.log("We need " + (96 - logs.getAmount()) + " more logs until we can purchase upgrades.");
+                    api.log("We need " + Math.ceil((2000 - (logs.getAmount() * Constants.getLogPrice())) / Constants.getLogPrice()) + " more logs until we can purchase upgrades.");
                 }
             }
-            if (oaks != null) {
-
-                //54 oak logs is the minimum to meet the above goal
-                if (api.quests.getQuestPoints() > 6 && oaks.getAmount() >= 54) {
-                    api.log("We have enough oak logs to purchase axes!");
-                    Constants.needToBuyAxes(true);
-                } else {
-                    api.log("We need " + (54 - oaks.getAmount()) + " more oak logs until we can purchase upgrades.");
-                }
-            }
+        } else {
+            Constants.pauseProgressiveMode(false);
         }
     }
 
@@ -386,7 +380,7 @@ class BankClass {
     }
 
     /**
-     * Function to deposit everything including the woodcut axes
+     * Function to deposit everything including equipment
      */
     void depositAll() {
         api.bank.depositAll();
@@ -396,5 +390,6 @@ class BankClass {
                 return api.inventory.isEmpty();
             }
         }.sleep();
+        api.bank.depositWornItems();
     }
 }
