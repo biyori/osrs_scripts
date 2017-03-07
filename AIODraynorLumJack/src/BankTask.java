@@ -16,6 +16,7 @@ import org.osbot.rs07.utility.ConditionalSleep;
 public class BankTask extends Task {
 
     private Area draynorBankRange = new Area(3092, 3242, 3090, 3245);
+    private Area darkWizardHazard = new Area(3092, 3240, 3097, 3250);
     private final BankClass bonk;
 
     BankTask(MethodProvider api) {
@@ -63,24 +64,7 @@ public class BankTask extends Task {
              */
             if (Banks.DRAYNOR.contains(api.myPlayer())) {
                 api.log("Under attack! Running to a safe spot...");
-
-                //Safe spot near abby witch
-                WebWalkEvent runEvent = new WebWalkEvent(new Area(3090, 3263, 3094, 3257));
-                runEvent.setEnergyThreshold(1);
-                api.execute(runEvent);
-
-                //Sleep until we are out of combat
-                new ConditionalSleep(10_000) {
-                    @Override
-                    public boolean condition() throws InterruptedException {
-                        return !api.myPlayer().isUnderAttack();
-                    }
-                }.sleep();
-
-                //Lets hop worlds to get away from the bank mages
-                if (api.worlds.hopToF2PWorld()) {
-                    api.log("Hopping worlds...");
-                }
+                runAndHop();
             } else {
 
                 /*
@@ -94,9 +78,19 @@ public class BankTask extends Task {
             }
         }
 
-
         RS2Object bankBooth = api.objects.closest(draynorBankRange, "Bank booth");
         NPC banker = api.npcs.closest(draynorBankRange, "Banker");
+        NPC darkWizard = api.npcs.closest(darkWizardHazard, "Dark wizard");
+
+        /*
+         * Check the bank for Dark Wizards
+         */
+        if (darkWizard != null) {
+            if (darkWizard.exists()) {
+                api.log("A Dark Wizard has invaded the bank! Hopping to a safer world...");
+                runAndHop();
+            }
+        }
 
         /*
          * If the booth exists, so must the bankers behind those booths
@@ -107,7 +101,7 @@ public class BankTask extends Task {
                 /*
                  * If the bank is not open, start trying to open the bank
                  */
-                if (!api.bank.isOpen() && !api.myPlayer().isUnderAttack()) {
+                if (!api.bank.isOpen()) {
 
                     /*
                      * If the script detected our axe purchase offer went through--open the collection window and
@@ -156,6 +150,29 @@ public class BankTask extends Task {
                  */
                 api.camera.toEntity(bankBooth);
             }
+        }
+    }
+
+    /**
+     * Function to run out of the bank and hop worlds
+     */
+    private void runAndHop() {
+        //Safe spot near abby witch
+        WebWalkEvent runEvent = new WebWalkEvent(new Area(3090, 3263, 3094, 3257));
+        runEvent.setEnergyThreshold(1);
+        api.execute(runEvent);
+
+        //Sleep until we are out of combat
+        new ConditionalSleep(10_000) {
+            @Override
+            public boolean condition() throws InterruptedException {
+                return !api.myPlayer().isUnderAttack();
+            }
+        }.sleep();
+
+        //Lets hop worlds to get away from the bank mages
+        if (api.worlds.hopToF2PWorld()) {
+            api.log("Hopping worlds...");
         }
     }
 }
