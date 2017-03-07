@@ -72,10 +72,12 @@ public class ChopTask extends Task {
                     /*
                      * After interacting with a tree sleep for 10 seconds or until we are chopping, under attack, or a level up widget has appeared
                      */
+                    boolean treeExists = tree.exists();
+
                     new ConditionalSleep(10_000) {
                         @Override
                         public boolean condition() throws InterruptedException {
-                            return api.myPlayer().isAnimating() || api.myPlayer().isUnderAttack() || api.widgets.isVisible(233);
+                            return api.myPlayer().isAnimating() || api.myPlayer().isUnderAttack() || api.widgets.isVisible(233) || !treeExists;
                         }
                     }.sleep();
 
@@ -159,7 +161,7 @@ public class ChopTask extends Task {
     private void runAwayToSafeSpot() {
         if (api.myPlayer().isUnderAttack()) {
             WebWalkEvent webEvent = new WebWalkEvent(Constants.getAreaForTree().getRandomPosition());
-            webEvent.setEnergyThreshold(0);
+            webEvent.setEnergyThreshold(1);
             api.execute(webEvent);
         }
     }
@@ -245,7 +247,7 @@ public class ChopTask extends Task {
                 new ConditionalSleep(10_000) {
                     @Override
                     public boolean condition() throws InterruptedException {
-                        return api.equipment.contains(Constants.woodAxes) || api.inventory.contains(Constants.woodAxes);
+                        return !(api.client.getLoginStateValue() == 45 || api.client.getLoginStateValue() == 25);
                     }
                 }.sleep();
 
