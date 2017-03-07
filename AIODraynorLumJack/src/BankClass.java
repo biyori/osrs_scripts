@@ -391,5 +391,11 @@ class BankClass {
             }
         }.sleep();
         api.bank.depositWornItems();
+        new ConditionalSleep(5_000) {
+            @Override
+            public boolean condition() throws InterruptedException {
+                return api.equipment.isEmpty();
+            }
+        }.sleep();
     }
 }
