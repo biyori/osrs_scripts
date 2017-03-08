@@ -141,6 +141,12 @@ public class Main extends Script {
                 log("Grand Exchange enabled");
 
                 /*
+                 * This constant is for pausing progressive mode--a constant that changes when our bank has the required
+                 * axes before progressing further onto Oak trees++
+                 */
+                Constants.pauseProgressiveMode(true);
+
+                /*
                  * ExchangeTask is responsible for walking to the GE and selling logs to purchase axes
                  */
                 tasks.add(new ExchangeTask(this));

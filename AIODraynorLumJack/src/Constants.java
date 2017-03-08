@@ -12,7 +12,7 @@ import org.osbot.rs07.api.map.Area;
 public class Constants {
     private static int total_logs = 0, nextHop = 0, playerLimits = 0, minutesPerHop = 0, logValue = 31;
     private static String statusReport = "", tree = "";
-    private static boolean powerChop = false, enableAntiBan = true, enableProgressiveMode = false, sellLogsAtGE = false, skipWillowTrees = false, pauseProgressiveMode = true, needToBuyAxes = false, needToCollectAxes = false;
+    private static boolean powerChop = false, enableAntiBan = true, enableProgressiveMode = false, sellLogsAtGE = false, skipWillowTrees = false, pauseProgressiveMode = false, needToBuyAxes = false, needToCollectAxes = false;
     private static long lastHop;
 
     static boolean powerChopping() {
