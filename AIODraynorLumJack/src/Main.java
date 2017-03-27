@@ -21,7 +21,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-@ScriptManifest(author = "Hayase", info = "Chops trees in Draynor/Lumbridge and finally banks in Draynor", name = "AIO Draynor Lumberjack", version = 1.1, logo = "http://i.imgur.com/la9gPez.png")
+@ScriptManifest(author = "Hayase", info = "Chops trees in Draynor/Lumbridge and finally banks in Draynor", name = "AIO Draynor Lumberjack", version = 1.2, logo = "http://i.imgur.com/la9gPez.png")
 public class Main extends Script {
 
     /**
