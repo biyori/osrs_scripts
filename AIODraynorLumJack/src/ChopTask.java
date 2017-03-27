@@ -179,7 +179,7 @@ public class ChopTask extends Task {
         /*
          * Param filtering from the GUI. If the user enters 0, do not hop
          */
-        if (playerLim != 0 || minutesEachHop != 0) {
+        if (Constants.hopWorldsEnable() && (playerLim != 0 || minutesEachHop != 0)) {
 
             /*
              * If the players meets the limit, continue the hop
@@ -243,13 +243,25 @@ public class ChopTask extends Task {
                  * Hopping now, sleep until the client detects our axe
                  *
                  * Occasionally after hopping worlds, we lose information about what is inside our inventory and equipment--the client needs to finish loading
+                 * State 45 = please wait...
+                 * State 25 = loading...
+                 * State 30 = loaded.
                  */
                 new ConditionalSleep(10_000) {
                     @Override
                     public boolean condition() throws InterruptedException {
-                        return !(api.client.getLoginStateValue() == 45 || api.client.getLoginStateValue() == 25);
+                        return api.getClient().getLoginStateValue() == 30;
                     }
                 }.sleep();
+
+                /*
+                 * Force a sleep after hopping successfully to make sure the client variables have finished refreshing (Fix no axe found issues)
+                 */
+                try {
+                    sleep(gRandom(2000, 500));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
                 /*
                  * Save the current time as the last hop timestamp

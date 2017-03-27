@@ -146,9 +146,11 @@ class GUI extends JFrame {
         enableHopWorlds.addActionListener(e -> {
             if (enableHopWorlds.isSelected()) {
                 hopSetup.setVisible(true);
+                Constants.hopWorldsEnable(true);
                 pack();
             } else if (!enableHopWorlds.isSelected()) {
                 hopSetup.setVisible(false);
+                Constants.hopWorldsEnable(false);
                 pack();
             }
         });
@@ -260,6 +262,7 @@ class GUI extends JFrame {
         treeTypes.setSelectedIndex(0);
         playerLim.setValue(3);
         hopInterval.setValue(5);
+        Constants.hopWorldsEnable(false);
         Constants.powerChopping(false);
         Constants.setEnableAntiBan(true);
         Constants.sellLogsAtGE(false);

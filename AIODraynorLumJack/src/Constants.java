@@ -12,7 +12,7 @@ import org.osbot.rs07.api.map.Area;
 public class Constants {
     private static int total_logs = 0, nextHop = 0, playerLimits = 0, minutesPerHop = 0, logValue = 31;
     private static String statusReport = "", tree = "";
-    private static boolean powerChop = false, enableAntiBan = true, enableProgressiveMode = false, sellLogsAtGE = false, skipWillowTrees = false, pauseProgressiveMode = false, needToBuyAxes = false, needToCollectAxes = false;
+    private static boolean powerChop = false, enableAntiBan = true, enableProgressiveMode = false, enableWorldHop = false, sellLogsAtGE = false, skipWillowTrees = false, pauseProgressiveMode = false, needToBuyAxes = false, needToCollectAxes = false;
     private static long lastHop;
 
     static boolean powerChopping() {
@@ -21,14 +21,6 @@ public class Constants {
 
     static void powerChopping(boolean yes) {
         Constants.powerChop = yes;
-    }
-
-    public static String statusReport() {
-        return Constants.statusReport;
-    }
-
-    public static void setStatusReport(int var) {
-        Constants.statusReport = statusReport;
     }
 
     static void setTotalLogs(int logs) {
@@ -211,6 +203,14 @@ public class Constants {
 
     static boolean useAntiban() {
         return Constants.enableAntiBan;
+    }
+
+    static boolean hopWorldsEnable() {
+        return Constants.enableWorldHop;
+    }
+
+    static void hopWorldsEnable(boolean enable) {
+        Constants.enableWorldHop = enable;
     }
 
     static void setHopValues(int playerLim, int minutesPerHop) {

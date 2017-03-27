@@ -168,7 +168,7 @@ public class Main extends Script {
         /*
          * World hopping support enabled if the world hop constraints do not equal zero
          */
-        if (Constants.getHopPlayerLim() != 0 || Constants.getHopTimeMin() != 0) {
+        if (Constants.hopWorldsEnable() && (Constants.getHopPlayerLim() != 0 || Constants.getHopTimeMin() != 0)) {
             log("World hopping enabled. We will hop after " + Constants.getHopPlayerLim() + " or more players enters our spot. The hop interval is every " + Constants.getHopTimeMin() + " minutes.");
         }
     }
@@ -197,7 +197,7 @@ public class Main extends Script {
         /*
          * Detect if we have gotten some logs from a tree
          */
-        if (m.contains("you get some") && m.endsWith("logs.")) {
+        if (c.getType().equals(Message.MessageType.GAME) && m.contains("you get some") && m.endsWith("logs.")) {
             logsChopped++;
         }
 
@@ -270,7 +270,7 @@ public class Main extends Script {
             /*
              * To handle the width of our paint box, store the strings in some objects to compare later
              */
-            String chopStats = Constants.treeLogType() + " chopped: " + logsChopped + " [" + Math.ceil(getPerHour(logsChopped)) + "/hr]";
+            String chopStats = Constants.treeLogType() + " Chopped: " + logsChopped + " [" + Math.ceil(getPerHour(logsChopped)) + "/hr]";
             String powerChop = Constants.powerChopping() ? "Loss" : "Profit";
             String profitStats = powerChop + ": " + logsChopped * logPrice + "gp [" + String.format("%.2f", (getPerHour(logsChopped)) * logPrice) + " gp/hr]";
 
@@ -300,15 +300,16 @@ public class Main extends Script {
             /*
              * Fill in the paint box with  strings
              */
-            if (Constants.powerChopping()) {
-                g.drawString("Power Chopping " + Constants.getSelectedTree() + "s", 25, 250);
-            } else
-                g.drawString(Constants.treeLogType() + " in bank: " + Constants.getTotalLogs() + " (" + profit + suffix + " gp)", 25, 250);//TODO AVERAGE BANK TIMER
-            g.drawString(profitStats, 25, 265);
+
+            g.drawString("Level: " + skills.getStatic(Skill.WOODCUTTING) + " (TTL: " + formatTime(experienceTracker.getTimeToLevel(Skill.WOODCUTTING)) + ")", 25, 250);
+            g.drawString("XP Gained: " + experienceTracker.getGainedXP(Skill.WOODCUTTING) + " [" + experienceTracker.getGainedXPPerHour(Skill.WOODCUTTING) + "/hr]", 25, 265);
             g.drawString(chopStats, 25, 280);
-            g.drawString("Time Ran: " + formatTime(System.currentTimeMillis() - startTime), 25, 295);
-            g.drawString("XP Gained: " + experienceTracker.getGainedXP(Skill.WOODCUTTING) + " [" + experienceTracker.getGainedXPPerHour(Skill.WOODCUTTING) + "/hr]", 25, 310);
-            g.drawString("Next level: " + formatTime(experienceTracker.getTimeToLevel(Skill.WOODCUTTING)), 25, 325);
+            if (Constants.powerChopping()) {
+                g.drawString("Power Chopping " + Constants.getSelectedTree() + "s", 25, 295);
+            } else
+                g.drawString(Constants.treeLogType() + " in Bank: " + Constants.getTotalLogs() + " (" + profit + suffix + " gp)", 25, 295);
+            g.drawString(profitStats, 25, 310);
+            g.drawString("Time Ran: " + formatTime(System.currentTimeMillis() - startTime), 25, 325);
         }
 
         /*
