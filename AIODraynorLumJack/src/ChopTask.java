@@ -258,7 +258,7 @@ public class ChopTask extends Task {
                  * Force a sleep after hopping successfully to make sure the client variables have finished refreshing (Fix no axe found issues)
                  */
                 try {
-                    sleep(gRandom(2000, 500));
+                    sleep(random(2000, 3100));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
