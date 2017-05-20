@@ -122,22 +122,7 @@ public class RandomTask extends Task {
                     localPlayer.get(0).hover();
                     afk(100, 200);
                     api.mouse.click(true);
-                    afk(1500, 2000);
-                    api.mouse.moveRandomly();
                 }
-                break;
-            case 6:
-                api.log("[Anti-Ban]: Move slightly");
-                try {
-                    api.mouse.moveSlightly(random(250, 2000));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case 7:
-                api.log("[Anti-Ban]: Move VERY slightly");
-                api.mouse.moveVerySlightly();
-                afk(50, 250);
                 break;
             case 8:
                 api.log("[Anti-Ban]: Move mouse out of screen");
